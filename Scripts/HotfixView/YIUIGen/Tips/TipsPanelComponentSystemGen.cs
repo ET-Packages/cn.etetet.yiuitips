@@ -35,7 +35,7 @@ namespace ET.Client
             self.UIPanel.PanelOption = EPanelOption.TimeCache;
             self.UIPanel.StackOption = EPanelStackOption.None;
             self.UIPanel.Priority = 9999;
-            self.UIPanel.CachePanelTime = 10;
+            self.UIPanel.CachePanelTime = 20;
 
 
         }

@@ -194,7 +194,7 @@ MonoBehaviour:
   PanelStackOption: 0
   ViewWindowType: 0
   ViewStackOption: 2
-  CachePanelTime: 10
+  CachePanelTime: 20
   Priority: 9999
 --- !u!1 &6681967862427250823
 GameObject:
