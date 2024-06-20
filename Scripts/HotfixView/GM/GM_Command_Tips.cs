@@ -4,8 +4,9 @@ using YIUIFramework;
 
 namespace ET.Client
 {
+    //主要用于在GM包上测试功能
+    //当前包没有强制引用GM包
     //如果没有引用GM包  请删除这个文件
-    //主要用于在GM包上测试弹窗功能
     [GM(EGMType.Test, 1, "弹窗测试-消息弹窗")]
     public class GM_TipsTest1 : IGMCommand
     {
