@@ -28,7 +28,7 @@ namespace ET.Client
 
         //消息 回收对象
         [EntitySystem]
-        private static async ETTask YIUIEvent(this TipsPanelComponent self, EventPutTipsView message)
+        private static async ETTask DynamicEvent(this TipsPanelComponent self, EventPutTipsView message)
         {
             await self.PutTips(message.View, message.Tween);
             self.CheckRefCount();
