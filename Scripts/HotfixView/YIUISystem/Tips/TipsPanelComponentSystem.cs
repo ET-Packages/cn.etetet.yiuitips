@@ -128,7 +128,11 @@ namespace ET.Client
                 return;
             }
 
-            await viewComponent.CloseAsync(tween);
+            var result = await viewComponent.CloseAsync(view, tween);
+            if (!result)
+            {
+                return;
+            }
 
             self._AllPoolLastTime[uiType] = UnityEngine.Time.time;
 
