@@ -124,6 +124,9 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
+    - Name: m_PackagesName
+      Entry: 1
+      Data: yiuitips
     - Name: IsSplitData
       Entry: 5
       Data: false
@@ -193,7 +196,7 @@ MonoBehaviour:
   PkgName: Tips
   ResName: TipsTextView
   UICodeType: 1
-  WindowOption: 123904
+  WindowOption: 124416
   PanelLayer: 3
   PanelOption: 0
   PanelStackOption: 2
