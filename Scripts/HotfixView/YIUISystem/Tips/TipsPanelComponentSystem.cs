@@ -21,6 +21,24 @@ namespace ET.Client
         }
 
         [EntitySystem]
+        private static async ETTask<bool> YIUIClose(this TipsPanelComponent self)
+        {
+            if (self._RefCount <= 0) return true;
+
+            foreach (var pool in self._AllPool.Values)
+            {
+                if (pool is not { Count: > 0 }) continue;
+                while (pool.Count > 0)
+                {
+                    var view = await pool.Get();
+                    await self.PutTips(view, false);
+                }
+            }
+
+            return true;
+        }
+
+        [EntitySystem]
         private static async ETTask<bool> YIUIOpen(this TipsPanelComponent self, Type viewType, Entity parent, ParamVo vo)
         {
             return await self.OpenTips(viewType, parent, vo);
