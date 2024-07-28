@@ -8,6 +8,7 @@ namespace ET.Client
     /// 可打开任意View 建议命名Tips[XXX]View
     /// T 必须是View 且必须有 IYIUIOpen〈ParamVo〉 接口
     /// View关闭发送回收消息 EventPutTipsView
+    /// 文档: https://lib9kmxvq7k.feishu.cn/wiki/OdNgwu0KsiyJ6NkK8vCcwbjbn1g
     /// </summary>
     public static class TipsHelper
     {

@@ -6,6 +6,7 @@ namespace ET.Client
 {
     /// <summary>
     /// 公共弹窗界面
+    /// 文档: https://lib9kmxvq7k.feishu.cn/wiki/OdNgwu0KsiyJ6NkK8vCcwbjbn1g
     /// </summary>
     [FriendOf(typeof(TipsPanelComponent))]
     public static partial class TipsPanelComponentSystem

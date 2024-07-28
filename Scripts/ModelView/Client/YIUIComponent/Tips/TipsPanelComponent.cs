@@ -4,6 +4,9 @@ using YIUIFramework;
 
 namespace ET.Client
 {
+    /// <summary>
+    /// 文档: https://lib9kmxvq7k.feishu.cn/wiki/OdNgwu0KsiyJ6NkK8vCcwbjbn1g
+    /// </summary>
     public partial class TipsPanelComponent : Entity, IYIUIClose, IYIUIOpen<Type, Entity, ParamVo>, IDynamicEvent<EventPutTipsView>
     {
         public Dictionary<Type, ObjAsyncCache<EntityRef<Entity>>> _AllPool         = new();
