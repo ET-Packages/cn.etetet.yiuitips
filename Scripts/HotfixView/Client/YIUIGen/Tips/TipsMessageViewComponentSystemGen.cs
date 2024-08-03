@@ -40,11 +40,11 @@ namespace ET.Client
             self.u_DataConfirmName = self.UIBase.DataTable.FindDataValue<YIUIFramework.UIDataValueString>("u_DataConfirmName");
             self.u_DataCancelName = self.UIBase.DataTable.FindDataValue<YIUIFramework.UIDataValueString>("u_DataCancelName");
             self.u_EventClose = self.UIBase.EventTable.FindEvent<UIEventP0>("u_EventClose");
-            self.u_EventCloseHandle = self.u_EventClose.Add(self.OnEventCloseAction);
+            self.u_EventCloseHandle = self.u_EventClose.Add(self,"OnEventCloseInvoke");
             self.u_EventCancel = self.UIBase.EventTable.FindEvent<UIEventP0>("u_EventCancel");
-            self.u_EventCancelHandle = self.u_EventCancel.Add(self.OnEventCancelAction);
+            self.u_EventCancelHandle = self.u_EventCancel.Add(self,"OnEventCancelInvoke");
             self.u_EventConfirm = self.UIBase.EventTable.FindEvent<UIEventP0>("u_EventConfirm");
-            self.u_EventConfirmHandle = self.u_EventConfirm.Add(self.OnEventConfirmAction);
+            self.u_EventConfirmHandle = self.u_EventConfirm.Add(self,"OnEventConfirmInvoke");
 
         }
     }
