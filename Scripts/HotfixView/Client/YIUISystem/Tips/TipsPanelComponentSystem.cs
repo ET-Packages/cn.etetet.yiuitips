@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using YIUIFramework;
 using UnityEngine;
 
@@ -25,17 +26,12 @@ namespace ET.Client
         private static async ETTask<bool> YIUIClose(this TipsPanelComponent self)
         {
             if (self._RefCount <= 0) return true;
-
-            foreach (var pool in self._AllPool.Values)
+            var tempRefView = new List<EntityRef<Entity>>();
+            tempRefView.AddRange(self._AllRefView);
+            foreach (Entity view in tempRefView)
             {
-                if (pool is not { Count: > 0 }) continue;
-                while (pool.Count > 0)
-                {
-                    var view = await pool.Get();
-                    await self.PutTips(view, false);
-                }
+                await self.PutTips(view, false);
             }
-
             return true;
         }
 
@@ -110,6 +106,8 @@ namespace ET.Client
 
             uiComponent.SetParent(parent);
 
+            self._AllRefView.Add(view);
+
             var result = await viewComponent.Open(vo);
             if (!result)
                 await self.PutTips(view, false);
@@ -123,6 +121,14 @@ namespace ET.Client
             if (view == null)
             {
                 Debug.LogError($"null对象 请检查");
+                return;
+            }
+
+            if (!self._AllRefView.Remove(view))
+            {
+                //如果你确定这个东西是用tips打开的 这里又报错 大概率就是你在open过程中 回收了这个对象 导致的 说明你写法有问题
+                //然后因为打开失败又会调用一次 所以重复回收也会提示 如果你open返回fase 可以不用手动回收 fase会自动回收
+                Debug.LogError($"{view.GetType().Name} 无法回收一个不存在的对象 必须是之前打开过的对象 否则引用计数会混乱 请检查");
                 return;
             }
 

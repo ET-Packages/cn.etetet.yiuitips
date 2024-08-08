@@ -13,6 +13,7 @@ namespace ET.Client
         public int                                                _RefCount        = 0;
         public Dictionary<Type, float>                            _AllPoolLastTime = new();
         public float                                              _AutoDestroyTime = 60f; //(暂定X秒没人使用自动摧毁)
+        public HashSet<EntityRef<Entity>>                         _AllRefView      = new();
     }
 
     /// <summary>
