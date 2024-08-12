@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using YIUIFramework;
 using UnityEngine;
+using UnityTime = UnityEngine.Time;
 
 namespace ET.Client
 {
@@ -30,8 +31,13 @@ namespace ET.Client
             tempRefView.AddRange(self._AllRefView);
             foreach (Entity view in tempRefView)
             {
-                await self.PutTips(view, false);
+                var viewComponent = view?.GetComponent<YIUIViewComponent>();
+                if (viewComponent != null)
+                {
+                    await viewComponent.CloseAsync(false);
+                }
             }
+
             return true;
         }
 
@@ -45,14 +51,29 @@ namespace ET.Client
         [EntitySystem]
         private static async ETTask DynamicEvent(this TipsPanelComponent self, EventPutTipsView message)
         {
-            await self.PutTips(message.View, message.Tween);
+            self.PutTips(message.View);
             self.CheckRefCount();
+            await ETTask.CompletedTask;
         }
 
         //对象池的实例化过程
-        private static ETTask<Entity> OnCreateViewRenderer(this TipsPanelComponent self, Type uiType, Entity parent)
+        private static async ETTask<Entity> OnCreateViewRenderer(this TipsPanelComponent self, Type uiType, Entity parent)
         {
-            return YIUIFactory.InstantiateAsync(uiType, parent ?? YIUIMgrComponent.Inst.Root, self.UIBase.OwnerRectTransform);
+            var entity = await YIUIFactory.InstantiateAsync(uiType, parent ?? YIUIMgrComponent.Inst.Root, self.UIBase.OwnerRectTransform);
+            if (entity != null)
+            {
+                var uiComponent = entity.GetParent<YIUIChild>()?.GetComponent<YIUIWindowComponent>();
+                if (uiComponent == null)
+                {
+                    Log.Error($"{uiType.Name} 实例化的对象非 YIUIWindowComponent");
+                }
+                else
+                {
+                    uiComponent.AddComponent<TipsViewComponent>();
+                }
+            }
+
+            return entity;
         }
 
         //打开Tips对应的View
@@ -110,13 +131,15 @@ namespace ET.Client
 
             var result = await viewComponent.Open(vo);
             if (!result)
-                await self.PutTips(view, false);
+            {
+                await viewComponent.CloseAsync(false);
+            }
 
             return self._RefCount > 0;
         }
 
         //回收
-        private static async ETTask PutTips(this TipsPanelComponent self, Entity view, bool tween = true)
+        private static void PutTips(this TipsPanelComponent self, Entity view)
         {
             if (view == null)
             {
@@ -133,34 +156,7 @@ namespace ET.Client
             }
 
             var uiType = view.GetType();
-            if (!self._AllPool.ContainsKey(uiType))
-            {
-                Debug.LogError($"没有这个对象池 请检查 {uiType}");
-                return;
-            }
-
-            var uiComponent = view.GetParent<YIUIChild>();
-            if (uiComponent == null)
-            {
-                Debug.LogError($"{uiType.Name} 实例化的对象非 YIUIChild");
-                return;
-            }
-
-            var viewComponent = uiComponent.GetComponent<YIUIViewComponent>();
-            if (viewComponent == null)
-            {
-                Debug.LogError($"{uiType.Name} 实例化的对象非 YIUIViewComponent");
-                return;
-            }
-
-            var result = await viewComponent.CloseAsync(view, tween);
-            if (!result)
-            {
-                return;
-            }
-
-            self._AllPoolLastTime[uiType] = UnityEngine.Time.time;
-
+            self._AllPoolLastTime[uiType] = UnityTime.time;
             var pool = self._AllPool[uiType];
             pool.Put(view);
             self._RefCount -= 1;
@@ -183,7 +179,7 @@ namespace ET.Client
         //优化方式 将会给每个类型增加一个倒计时 如果超过一定时间没有打开 那么就回收相关的所有
         private static void CheckAllPoolTips(this TipsPanelComponent self)
         {
-            var time = UnityEngine.Time.time;
+            var time = UnityTime.time;
             foreach (var uiType in self._AllPoolLastTime.Keys)
             {
                 if (time - self._AllPoolLastTime[uiType] > self._AutoDestroyTime)

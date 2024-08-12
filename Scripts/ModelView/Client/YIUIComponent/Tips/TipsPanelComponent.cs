@@ -15,13 +15,4 @@ namespace ET.Client
         public float                                              _AutoDestroyTime = 60f; //(暂定X秒没人使用自动摧毁)
         public HashSet<EntityRef<Entity>>                         _AllRefView      = new();
     }
-
-    /// <summary>
-    /// 通用弹窗view关闭事件
-    /// </summary>
-    public struct EventPutTipsView
-    {
-        public Entity View;  //View实例
-        public bool   Tween; //关闭时是否可触发动画
-    }
 }

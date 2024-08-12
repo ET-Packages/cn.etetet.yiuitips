@@ -63,21 +63,21 @@ namespace ET.Client
         private static void OnEventConfirmInvoke(this TipsMessageViewComponent self)
         {
             self.ExtraData.ConfirmCallBack?.Invoke();
-            TipsHelper.CloseTipsViewSync(self);
+            self.UIView.Close();
         }
 
         [YIUIInvoke]
         private static void OnEventCancelInvoke(this TipsMessageViewComponent self)
         {
             self.ExtraData.CancelCallBack?.Invoke();
-            TipsHelper.CloseTipsView(self).NoContext();
+            self.UIView.Close();
         }
 
         [YIUIInvoke]
         private static void OnEventCloseInvoke(this TipsMessageViewComponent self)
         {
             self.ExtraData.CloseCallBack?.Invoke();
-            TipsHelper.CloseTipsView(self).NoContext();
+            self.UIView.Close();
         }
 
         #endregion YIUIEvent结束

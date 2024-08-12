@@ -38,7 +38,7 @@ namespace ET.Client
         {
             self.u_ComAnimation.Play(self.u_ComAnimation.clip.name);
             await self.Root().GetComponent<TimerComponent>().WaitAsync((long)(self.u_ComAnimation.clip.length * 1000));
-            await TipsHelper.CloseTipsView(self);
+            await self.UIView.CloseAsync();
         }
 
         #region YIUIEvent开始
