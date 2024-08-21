@@ -14,7 +14,7 @@ namespace ET.Client
         {
             return new()
             {
-                new GMParamInfo(EGMParamType.String, "消息内容"),
+                new GMParamInfo(EGMParamType.String, "消息内容", "测试消息内容"),
             };
         }
 
@@ -96,7 +96,7 @@ namespace ET.Client
         {
             return new()
             {
-                new GMParamInfo(EGMParamType.String, "消息内容"),
+                new GMParamInfo(EGMParamType.String, "消息内容", "飘字消息测试内容"),
             };
         }
 
