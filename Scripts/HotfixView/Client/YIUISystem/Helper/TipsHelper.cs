@@ -10,7 +10,7 @@ namespace ET.Client
     /// View关闭发送回收消息 EventPutTipsView
     /// 文档: https://lib9kmxvq7k.feishu.cn/wiki/OdNgwu0KsiyJ6NkK8vCcwbjbn1g
     /// </summary>
-    public static class TipsHelper
+    public static partial class TipsHelper
     {
         //在Tips界面打开任意一个View窗口
         public static async ETTask Open<T>(params object[] paramMore)

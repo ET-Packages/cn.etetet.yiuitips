@@ -47,6 +47,12 @@ namespace ET.Client
             return await self.OpenTips(viewType, parent, vo);
         }
 
+        [EntitySystem]
+        private static async ETTask<bool> YIUIOpen(this TipsPanelComponent self, Type viewType, Entity parent, long waitId, ParamVo vo)
+        {
+            return await self.OpenTips(viewType, parent, vo, waitId);
+        }
+
         //消息 回收对象
         [EntitySystem]
         private static async ETTask DynamicEvent(this TipsPanelComponent self, EventPutTipsView message)
@@ -57,19 +63,23 @@ namespace ET.Client
         }
 
         //对象池的实例化过程
-        private static async ETTask<Entity> OnCreateViewRenderer(this TipsPanelComponent self, Type uiType, Entity parent)
+        private static async ETTask<Entity> OnCreateViewRenderer(this TipsPanelComponent self, Type uiType, Entity parent, long waitId = 0)
         {
             var entity = await YIUIFactory.InstantiateAsync(uiType, parent ?? YIUIMgrComponent.Inst.Root, self.UIBase.OwnerRectTransform);
             if (entity != null)
             {
-                var uiComponent = entity.GetParent<YIUIChild>()?.GetComponent<YIUIWindowComponent>();
-                if (uiComponent == null)
+                var windowComponent = entity.GetParent<YIUIChild>()?.GetComponent<YIUIWindowComponent>();
+                if (windowComponent == null)
                 {
                     Log.Error($"{uiType.Name} 实例化的对象非 YIUIWindowComponent");
                 }
                 else
                 {
-                    uiComponent.AddComponent<TipsViewComponent>();
+                    windowComponent.AddComponent<TipsViewComponent>();
+                    if (waitId != 0)
+                    {
+                        windowComponent.AddComponent<YIUIWaitComponent, long>(waitId);
+                    }
                 }
             }
 
@@ -78,13 +88,13 @@ namespace ET.Client
 
         //打开Tips对应的View
         [EnableAccessEntiyChild]
-        private static async ETTask<bool> OpenTips(this TipsPanelComponent self, Type uiType, Entity parent, ParamVo vo)
+        private static async ETTask<bool> OpenTips(this TipsPanelComponent self, Type uiType, Entity parent, ParamVo vo, long waitId = 0)
         {
             if (!self._AllPool.ContainsKey(uiType))
             {
                 async ETTask<EntityRef<Entity>> Create()
                 {
-                    return await self.OnCreateViewRenderer(uiType, parent);
+                    return await self.OnCreateViewRenderer(uiType, parent, waitId);
                 }
 
                 self._AllPool.Add(uiType, new ObjAsyncCache<EntityRef<Entity>>(Create));
@@ -113,6 +123,12 @@ namespace ET.Client
                 Debug.LogError($"{uiType.Name} 实例化的对象非 YIUIChild");
                 self._RefCount -= 1;
                 return self._RefCount > 0;
+            }
+
+            var windowComponent = uiComponent.GetComponent<YIUIWindowComponent>();
+            if (windowComponent != null)
+            {
+                windowComponent.GetComponent<YIUIWaitComponent>()?.Reset(waitId);
             }
 
             var viewComponent = uiComponent.GetComponent<YIUIViewComponent>();
