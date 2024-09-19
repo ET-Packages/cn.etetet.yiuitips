@@ -13,14 +13,6 @@ namespace ET.Client
             return error;
         }
 
-        public static async ETTask<HashWaitError> OpenWaitTimeOut<T>(long timeOut, params object[] paramMore) where T : Entity, IYIUIBind, IYIUIOpen<ParamVo>
-        {
-            var vo    = ParamVo.Get(paramMore);
-            var error = await OpenWaitToParent<T>(vo, null, timeOut);
-            ParamVo.Put(vo);
-            return error;
-        }
-
         public static async ETTask<HashWaitError> OpenWaitToParent<T>(Entity parent, params object[] paramMore) where T : Entity, IYIUIBind, IYIUIOpen<ParamVo>
         {
             var vo    = ParamVo.Get(paramMore);
@@ -29,14 +21,14 @@ namespace ET.Client
             return error;
         }
 
-        public static async ETTask<HashWaitError> OpenWaitToParent<T>(ParamVo vo, Entity parent = null, long timeOut = 0)
+        public static async ETTask<HashWaitError> OpenWaitToParent<T>(ParamVo vo, Entity parent = null)
                 where T : Entity, IYIUIBind, IYIUIOpen<ParamVo>
         {
             var coroutineLock = await YIUIMgrComponent.Inst.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
 
             var guid = IdGenerater.Instance.GenerateId();
 
-            var hashWait = YIUIMgrComponent.Inst.Root.GetComponent<HashWait>().Wait(guid, timeOut);
+            var hashWait = YIUIMgrComponent.Inst.Root.GetComponent<HashWait>().Wait(guid);
 
             await YIUIMgrComponent.Inst.Root.OpenPanelAsync<TipsPanelComponent, Type, Entity, long, ParamVo>(typeof(T), parent, guid, vo);
 

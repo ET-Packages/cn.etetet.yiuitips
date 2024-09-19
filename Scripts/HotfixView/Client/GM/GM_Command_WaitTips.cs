@@ -86,7 +86,12 @@ namespace ET.Client
         private async ETTask Test(long timeout)
         {
             Log.Error($"打开 等待弹窗测试 超时测试");
-            var result = await TipsHelper.OpenWaitTimeOut<TipsMessageViewComponent>(timeout, "回调测试", new MessageTipsExtraData() { ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); }, CancelCallBack = () => { Debug.LogError($"回调测试, 取消按钮"); } });
+            var result = await TipsHelper.OpenWait<TipsMessageViewComponent>("回调测试", 
+                new MessageTipsExtraData()
+                {
+                    ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); }, 
+                    CancelCallBack = () => { Debug.LogError($"回调测试, 取消按钮"); }
+                }).TimeoutAsync(timeout);
             Log.Error($"等待弹窗测试等待完毕 继续执行 超时测试: {result}");
         }
     }
@@ -124,7 +129,12 @@ namespace ET.Client
         private async ETTask Test(long timeout)
         {
             Log.Error($"打开 等待弹窗测试 取消超时测试");
-            var result = await TipsHelper.OpenWaitTimeOut<TipsMessageViewComponent>(timeout, "回调测试", new MessageTipsExtraData() { ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); }, CancelCallBack = () => { Debug.LogError($"回调测试, 取消按钮"); } });
+            var result = await TipsHelper.OpenWait<TipsMessageViewComponent>("回调测试", 
+                new MessageTipsExtraData()
+                {
+                    ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); }, 
+                    CancelCallBack = () => { Debug.LogError($"回调测试, 取消按钮"); }
+                }).TimeoutAsync(timeout);
             Log.Error($"等待弹窗测试等待完毕 继续执行 取消超时测试: {result}");
         }
     }
