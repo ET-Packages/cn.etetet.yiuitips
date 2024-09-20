@@ -19,12 +19,20 @@ namespace ET.Client
         {
             if (viewCloseResult)
             {
-                await self.DynamicEvent(new EventPutTipsView() { View = self?.GetParent<YIUIWindowComponent>()?.OwnerUIEntity });
+                WaitFrameDynamicEvent(self.Fiber(), new EventPutTipsView() { View = self?.GetParent<YIUIWindowComponent>()?.OwnerUIEntity }).NoContext();
             }
             else
             {
                 Log.Info($"View {self?.GetParent<YIUIWindowComponent>()?.UIBase?.OwnerGameObject.name} 被关闭，但其父级未关闭 所以不触发回收Tips 请注意");
             }
+
+            await ETTask.CompletedTask;
+        }
+
+        private static async ETTask WaitFrameDynamicEvent(Fiber fiber, EventPutTipsView putTipsEvent)
+        {
+            await fiber.Root?.GetComponent<TimerComponent>()?.WaitFrameAsync();
+            await fiber.EntitySystem?.DynamicEvent(putTipsEvent);
         }
     }
 }
