@@ -18,6 +18,7 @@ namespace ET.Client
         private static void Destroy(this TipsViewComponent self)
         {
             if (!self.m_IsFromTips) return;
+            self.m_IsFromTips = false;
             self.Fiber()?.EntitySystem?.DynamicEvent(new EventPutTipsView() { View = self.GetParent<YIUIWindowComponent>()?.OwnerUIEntity, Destroy = true });
         }
 
@@ -25,6 +26,7 @@ namespace ET.Client
         private static async ETTask YIUIWindowClose(this TipsViewComponent self, bool viewCloseResult)
         {
             if (!self.m_IsFromTips) return;
+            self.m_IsFromTips = false;
             if (viewCloseResult)
             {
                 WaitFrameDynamicEvent(self.Fiber(), new EventPutTipsView() { View = self?.GetParent<YIUIWindowComponent>()?.OwnerUIEntity }).NoContext();
