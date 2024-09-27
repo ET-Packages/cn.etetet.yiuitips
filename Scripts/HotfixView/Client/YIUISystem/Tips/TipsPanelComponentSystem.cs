@@ -21,6 +21,13 @@ namespace ET.Client
         [EntitySystem]
         private static void Destroy(this TipsPanelComponent self)
         {
+            if (self._RefCount <= 0) return;
+            var tempRefView = new List<EntityRef<Entity>>();
+            tempRefView.AddRange(self._AllRefView);
+            foreach (Entity view in tempRefView)
+            {
+                view?.Parent?.Dispose();
+            }
         }
 
         [EntitySystem]
@@ -57,8 +64,7 @@ namespace ET.Client
         [EntitySystem]
         private static async ETTask DynamicEvent(this TipsPanelComponent self, EventPutTipsView message)
         {
-            self.PutTips(message.View);
-            self.CheckRefCount();
+            self.PutTips(message.View, message.Destroy);
             await ETTask.CompletedTask;
         }
 
@@ -128,6 +134,7 @@ namespace ET.Client
             var windowComponent = uiComponent.GetComponent<YIUIWindowComponent>();
             if (windowComponent != null)
             {
+                windowComponent.GetComponent<TipsViewComponent>()?.Reset();
                 windowComponent.GetComponent<YIUIWaitComponent>()?.Reset(waitId);
             }
 
@@ -155,7 +162,7 @@ namespace ET.Client
         }
 
         //回收
-        private static void PutTips(this TipsPanelComponent self, Entity view)
+        private static void PutTips(this TipsPanelComponent self, Entity view, bool destroy = false)
         {
             if (view == null)
             {
@@ -171,11 +178,22 @@ namespace ET.Client
                 return;
             }
 
-            var uiType = view.GetType();
-            self._AllPoolLastTime[uiType] = UnityTime.time;
-            var pool = self._AllPool[uiType];
-            pool.Put(view);
+            if (!destroy)
+            {
+                var uiType = view.GetType();
+                if (!self._AllPool.ContainsKey(uiType))
+                {
+                    Log.Error($"TipsPanelComponent 没有找到 {uiType.Name} 的缓存池");
+                    return;
+                }
+
+                self._AllPoolLastTime[uiType] = UnityTime.time;
+                var pool = self._AllPool[uiType];
+                pool.Put(view);
+            }
+
             self._RefCount -= 1;
+            self.CheckRefCount();
         }
 
         //检查引用计数 如果<=0 就自动关闭UI

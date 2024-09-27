@@ -1,8 +1,9 @@
 ﻿namespace ET.Client
 {
     [ComponentOf(typeof(YIUIWindowComponent))]
-    public partial class TipsViewComponent : Entity, IAwake, IYIUIWindowClose
+    public partial class TipsViewComponent : Entity, IAwake, IDestroy, IYIUIWindowClose
     {
+        public bool m_IsFromTips;
     }
 
     /// <summary>
@@ -11,5 +12,6 @@
     public struct EventPutTipsView
     {
         public Entity View;
+        public bool   Destroy;
     }
 }

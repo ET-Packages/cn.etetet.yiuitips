@@ -15,15 +15,23 @@ namespace ET.Client
         }
 
         [EntitySystem]
+        private static void Destroy(this TipsViewComponent self)
+        {
+            if (!self.m_IsFromTips) return;
+            self.Fiber()?.EntitySystem?.DynamicEvent(new EventPutTipsView() { View = self.GetParent<YIUIWindowComponent>()?.OwnerUIEntity, Destroy = true });
+        }
+
+        [EntitySystem]
         private static async ETTask YIUIWindowClose(this TipsViewComponent self, bool viewCloseResult)
         {
+            if (!self.m_IsFromTips) return;
             if (viewCloseResult)
             {
                 WaitFrameDynamicEvent(self.Fiber(), new EventPutTipsView() { View = self?.GetParent<YIUIWindowComponent>()?.OwnerUIEntity }).NoContext();
             }
             else
             {
-                Log.Info($"View {self?.GetParent<YIUIWindowComponent>()?.UIBase?.OwnerGameObject.name} 被关闭，但其父级未关闭 所以不触发回收Tips 请注意");
+                Log.Info($"View {self.GetParent<YIUIWindowComponent>()?.UIBase?.OwnerGameObject.name} 被关闭，但其父级未关闭 所以不触发回收Tips 请注意");
             }
 
             await ETTask.CompletedTask;
@@ -33,6 +41,11 @@ namespace ET.Client
         {
             await fiber.Root?.GetComponent<TimerComponent>()?.WaitFrameAsync();
             await fiber.EntitySystem?.DynamicEvent(putTipsEvent);
+        }
+
+        public static void Reset(this TipsViewComponent self)
+        {
+            self.m_IsFromTips = true;
         }
     }
 }
