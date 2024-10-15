@@ -4,7 +4,7 @@ using YIUIFramework;
 
 namespace ET.Client
 {
-    [GM(EGMType.Test, 0, "等待窗口测试 不关闭会一直等待逻辑 Success")]
+    [GM(EGMType.Tips, 0, "等待窗口测试 不关闭会一直等待逻辑 Success")]
     public class GM_TipsTest0 : IGMCommand
     {
         public List<GMParamInfo> GetParams()
@@ -27,7 +27,7 @@ namespace ET.Client
         }
     }
 
-    [GM(EGMType.Test, 0, "等待窗口测试 取消测试 Cancel")]
+    [GM(EGMType.Tips, 0, "等待窗口测试 取消测试 Cancel")]
     public class GM_TipsTest0_1 : IGMCommand
     {
         public List<GMParamInfo> GetParams()
@@ -63,7 +63,7 @@ namespace ET.Client
         }
     }
 
-    [GM(EGMType.Test, 0, "等待窗口测试 超时测试 TimeOut")]
+    [GM(EGMType.Tips, 0, "等待窗口测试 超时测试 TimeOut")]
     public class GM_TipsTest0_2 : IGMCommand
     {
         public List<GMParamInfo> GetParams()
@@ -96,7 +96,7 @@ namespace ET.Client
         }
     }
 
-    [GM(EGMType.Test, 0, "等待窗口测试 取消超时测试 Cancel+TimeOut")]
+    [GM(EGMType.Tips, 0, "等待窗口测试 取消超时测试 Cancel+TimeOut")]
     public class GM_TipsTest0_3 : IGMCommand
     {
         public List<GMParamInfo> GetParams()
