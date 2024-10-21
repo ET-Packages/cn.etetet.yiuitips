@@ -38,7 +38,7 @@ namespace ET.Client
             tempRefView.AddRange(self._AllRefView);
             foreach (Entity view in tempRefView)
             {
-                var viewComponent = view?.GetComponent<YIUIViewComponent>();
+                var viewComponent = view?.Parent?.GetComponent<YIUIViewComponent>();
                 if (viewComponent != null)
                 {
                     await viewComponent.CloseAsync(false);
