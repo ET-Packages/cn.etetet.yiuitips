@@ -29,10 +29,13 @@ namespace ET.Client
         public YIUIFramework.UIDataValueString u_DataCancelName;
         public UIEventP0 u_EventClose;
         public UIEventHandleP0 u_EventCloseHandle;
+        public const string OnEventCloseInvoke = "TipsMessageViewComponent.OnEventCloseInvoke";
         public UIEventP0 u_EventCancel;
         public UIEventHandleP0 u_EventCancelHandle;
+        public const string OnEventCancelInvoke = "TipsMessageViewComponent.OnEventCancelInvoke";
         public UIEventP0 u_EventConfirm;
         public UIEventHandleP0 u_EventConfirmHandle;
+        public const string OnEventConfirmInvoke = "TipsMessageViewComponent.OnEventConfirmInvoke";
 
     }
 }
