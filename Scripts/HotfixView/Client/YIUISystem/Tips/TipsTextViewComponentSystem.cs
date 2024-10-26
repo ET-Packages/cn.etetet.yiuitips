@@ -1,6 +1,5 @@
 ﻿using System;
 using YIUIFramework;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ET.Client
@@ -17,7 +16,14 @@ namespace ET.Client
         private static void Destroy(this TipsTextViewComponent self)
         {
         }
-
+        
+        [EntitySystem]
+        private static async ETTask<bool> YIUIOpen(this TipsTextViewComponent self)
+        {
+            await ETTask.CompletedTask;
+            return true;
+        }
+ 
         [EntitySystem]
         private static async ETTask<bool> YIUIOpen(this TipsTextViewComponent self, ParamVo vo)
         {
@@ -40,6 +46,7 @@ namespace ET.Client
             await self.Root().GetComponent<TimerComponent>().WaitAsync((long)(self.u_ComAnimation.clip.length * 1000));
             await self.UIView.CloseAsync();
         }
+
 
         #region YIUIEvent开始
 

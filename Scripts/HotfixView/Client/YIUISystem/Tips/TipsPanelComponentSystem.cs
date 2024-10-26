@@ -49,6 +49,13 @@ namespace ET.Client
         }
 
         [EntitySystem]
+        private static async ETTask<bool> YIUIOpen(this TipsPanelComponent self)
+        {
+            await ETTask.CompletedTask;
+            return true;
+        }
+
+        [EntitySystem]
         private static async ETTask<bool> YIUIOpen(this TipsPanelComponent self, Type viewType, Entity parent, ParamVo vo)
         {
             return await self.OpenTips(viewType, parent, vo);
