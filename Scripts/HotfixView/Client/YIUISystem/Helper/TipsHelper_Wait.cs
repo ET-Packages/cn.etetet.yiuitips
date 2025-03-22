@@ -3,6 +3,9 @@ using YIUIFramework;
 
 namespace ET.Client
 {
+    /// <summary>
+    /// 可等待的弹窗
+    /// </summary>
     public static partial class TipsHelper
     {
         public static async ETTask<HashWaitError> OpenWait<T>(params object[] paramMore) where T : Entity, IYIUIBind, IYIUIOpen<ParamVo>
