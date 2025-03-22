@@ -173,7 +173,22 @@ namespace ET.Client
         {
             if (view == null)
             {
-                Debug.LogError($"null对象 请检查");
+                if (!destroy)
+                {
+                    Debug.LogError($"null对象 请检查");
+                }
+
+                self._AllRefView.RemoveWhere((v) =>
+                {
+                    if ((Entity)v == null)
+                    {
+                        self._RefCount -= 1;
+                        return true;
+                    }
+
+                    return false;
+                });
+                self.CheckRefCount();
                 return;
             }
 
