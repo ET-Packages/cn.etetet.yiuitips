@@ -75,41 +75,17 @@ namespace ET.Client
             await ETTask.CompletedTask;
         }
 
-        //对象池的实例化过程
-        private static async ETTask<Entity> OnCreateViewRenderer(this TipsPanelComponent self, Type uiType, Entity parent, long waitId = 0)
-        {
-            var entity = await YIUIFactory.InstantiateAsync(uiType, parent ?? YIUIMgrComponent.Inst.Root, self.UIBase.OwnerRectTransform);
-            if (entity != null)
-            {
-                var windowComponent = entity.GetParent<YIUIChild>()?.GetComponent<YIUIWindowComponent>();
-                if (windowComponent == null)
-                {
-                    Log.Error($"{uiType.Name} 实例化的对象非 YIUIWindowComponent");
-                }
-                else
-                {
-                    windowComponent.AddComponent<TipsViewComponent>();
-                    if (waitId != 0)
-                    {
-                        windowComponent.AddComponent<YIUIWaitComponent, long>(waitId);
-                    }
-                }
-            }
-
-            return entity;
-        }
-
         //打开Tips对应的View
         [EnableAccessEntiyChild]
         private static async ETTask<bool> OpenTips(this TipsPanelComponent self, Type uiType, Entity parent, ParamVo vo, long waitId = 0)
         {
+            if (!CheckParent())
+            {
+                return self._RefCount > 0;
+            }
+
             if (!self._AllPool.ContainsKey(uiType))
             {
-                async ETTask<EntityRef<Entity>> Create()
-                {
-                    return await self.OnCreateViewRenderer(uiType, parent, waitId);
-                }
-
                 self._AllPool.Add(uiType, new ObjAsyncCache<EntityRef<Entity>>(Create));
             }
 
@@ -126,6 +102,7 @@ namespace ET.Client
             if (view is not IYIUIOpen<ParamVo>)
             {
                 Debug.LogError($"{uiType.Name} 必须实现 IYIUIOpen<ParamVo> 才可用Tips");
+                view.Parent?.Dispose();
                 self._RefCount -= 1;
                 return self._RefCount > 0;
             }
@@ -134,6 +111,7 @@ namespace ET.Client
             if (uiComponent == null)
             {
                 Debug.LogError($"{uiType.Name} 实例化的对象非 YIUIChild");
+                view.Parent?.Dispose();
                 self._RefCount -= 1;
                 return self._RefCount > 0;
             }
@@ -141,15 +119,40 @@ namespace ET.Client
             var windowComponent = uiComponent.GetComponent<YIUIWindowComponent>();
             if (windowComponent != null)
             {
-                windowComponent.GetComponent<TipsViewComponent>()?.Reset();
-                windowComponent.GetComponent<YIUIWaitComponent>()?.Reset(waitId);
+                var tipsView = windowComponent.GetComponent<TipsViewComponent>() ?? windowComponent.AddComponent<TipsViewComponent>();
+                tipsView.Reset();
+
+                if (waitId != 0)
+                {
+                    var waitComponent = windowComponent.GetComponent<YIUIWaitComponent>();
+                    if (waitComponent != null)
+                    {
+                        waitComponent.Reset(waitId);
+                    }
+                    else
+                    {
+                        windowComponent.AddComponent<YIUIWaitComponent, long>(waitId);
+                    }
+                }
+                else
+                {
+                    windowComponent.GetComponent<YIUIWaitComponent>()?.Dispose();
+                }
             }
 
             var viewComponent = uiComponent.GetComponent<YIUIViewComponent>();
             if (viewComponent == null)
             {
                 Debug.LogError($"{uiType.Name} 实例化的对象非 YIUIViewComponent");
+                view.Parent?.Dispose();
                 self._RefCount -= 1;
+                return self._RefCount > 0;
+            }
+
+            if (!CheckParent())
+            {
+                Log.Error($"加载完毕后 父级已被销毁 {uiType.Name}");
+                await viewComponent.CloseAsync(false);
                 return self._RefCount > 0;
             }
 
@@ -166,6 +169,25 @@ namespace ET.Client
             }
 
             return self._RefCount > 0;
+
+            async ETTask<EntityRef<Entity>> Create()
+            {
+                return await YIUIFactory.InstantiateAsync(uiType, YIUIMgrComponent.Inst.Root, self.UIBase.OwnerRectTransform);
+            }
+
+            bool CheckParent()
+            {
+                if (parent != null)
+                {
+                    if (parent is { IsDisposed: true } || parent.IScene == null)
+                    {
+                        Log.Error($"父级必须是存在的对象 请检查");
+                        return false;
+                    }
+                }
+
+                return true;
+            }
         }
 
         //回收
