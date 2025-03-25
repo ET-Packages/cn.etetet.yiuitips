@@ -156,6 +156,13 @@ namespace ET.Client
                 return self._RefCount > 0;
             }
 
+            var tipsRoot = self.UIBase.OwnerRectTransform;
+            var viewRoot = uiComponent.OwnerRectTransform.parent;
+            if (viewRoot != tipsRoot)
+            {
+                uiComponent.OwnerRectTransform.SetParent(tipsRoot, false);
+            }
+
             uiComponent.OwnerRectTransform.SetAsLastSibling();
 
             uiComponent.SetParent(parent);
@@ -234,6 +241,17 @@ namespace ET.Client
                 self._AllPoolLastTime[uiType] = UnityTime.time;
                 var pool = self._AllPool[uiType];
                 pool.Put(view);
+
+                var uiComponent = view.GetParent<YIUIChild>();
+                if (uiComponent != null)
+                {
+                    var tipsRoot = self.UIBase.OwnerRectTransform;
+                    var viewRoot = uiComponent.OwnerRectTransform.parent;
+                    if (viewRoot != tipsRoot)
+                    {
+                        uiComponent.OwnerRectTransform.SetParent(tipsRoot, false);
+                    }
+                }
             }
 
             self._RefCount -= 1;
