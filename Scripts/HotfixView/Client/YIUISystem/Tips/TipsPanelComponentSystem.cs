@@ -165,7 +165,7 @@ namespace ET.Client
 
             uiComponent.OwnerRectTransform.SetAsLastSibling();
 
-            uiComponent.SetParent(parent);
+            uiComponent.SetParent(parent ?? YIUIMgrComponent.Inst.Root);
 
             self._AllRefView.Add(view);
 
@@ -251,6 +251,8 @@ namespace ET.Client
                     {
                         uiComponent.OwnerRectTransform.SetParent(tipsRoot, false);
                     }
+
+                    uiComponent.SetParent(YIUIMgrComponent.Inst.Root);
                 }
             }
 
