@@ -11,7 +11,7 @@ namespace ET.Client
     {
         public static async ETTask<HashWaitError> OpenWait(string resName, params object[] paramMore)
         {
-            var vo    = ParamVo.Get(paramMore);
+            var vo = ParamVo.Get(paramMore);
             var error = await OpenWaitToParent(resName, vo);
             ParamVo.Put(vo);
             return error;
@@ -19,7 +19,7 @@ namespace ET.Client
 
         public static async ETTask<HashWaitError> OpenWaitToParent(string resName, Entity parent, params object[] paramMore)
         {
-            var vo    = ParamVo.Get(paramMore);
+            var vo = ParamVo.Get(paramMore);
             var error = await OpenWaitToParent(resName, vo, parent);
             ParamVo.Put(vo);
             return error;
@@ -31,15 +31,17 @@ namespace ET.Client
             if (data == null) return HashWaitError.Error;
             var bindVo = data.Value;
 
-            var coroutineLock = await YIUIMgrComponent.Inst.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
+            EntityRef<Entity> parentRef = parent;
+            EntityRef<CoroutineLock> coroutineLock = await YIUIMgrComponent.Inst.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
 
             var guid = IdGenerater.Instance.GenerateId();
 
             var hashWait = YIUIMgrComponent.Inst.Root.GetComponent<HashWait>().Wait(guid);
 
-            await YIUIMgrComponent.Inst.Root.OpenPanelAsync<TipsPanelComponent, Type, Entity, long, ParamVo>(bindVo.ComponentType, parent, guid, vo);
+            await YIUIMgrComponent.Inst.Root.OpenPanelAsync<TipsPanelComponent, Type, Entity, long, ParamVo>(bindVo.ComponentType, parentRef.Entity, guid, vo);
 
-            coroutineLock.Dispose();
+            coroutineLock.Entity.Dispose();
+
             return await hashWait;
         }
     }

@@ -43,10 +43,9 @@ namespace ET.Client
             var data = YIUIBindHelper.GetBindVoByResName(resName);
             if (data == null) return;
             var bindVo = data.Value;
-
+            EntityRef<Entity> parentRef = parent;
             using var coroutineLock = await YIUIMgrComponent.Inst.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
-
-            await YIUIMgrComponent.Inst.Root.OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(bindVo.ComponentType, parent, vo);
+            await YIUIMgrComponent.Inst.Root.OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(bindVo.ComponentType, parentRef.Entity, vo);
         }
 
         //使用paramvo参数 同步打开 内部还是异步 为了解决vo被回收问题
@@ -61,11 +60,10 @@ namespace ET.Client
             var data = YIUIBindHelper.GetBindVoByResName(resName);
             if (data == null) return;
             var bindVo = data.Value;
-
+            EntityRef<Entity> parentRef = parent;
             using var coroutineLock = await YIUIMgrComponent.Inst.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
-
             var newVo = ParamVo.Get(vo.Data);
-            await YIUIMgrComponent.Inst.Root.OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(bindVo.ComponentType, parent, newVo);
+            await YIUIMgrComponent.Inst.Root.OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(bindVo.ComponentType, parentRef.Entity, newVo);
             ParamVo.Put(newVo);
         }
     }

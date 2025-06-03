@@ -16,14 +16,14 @@ namespace ET.Client
         private static void Destroy(this TipsTextViewComponent self)
         {
         }
-        
+
         [EntitySystem]
         private static async ETTask<bool> YIUIOpen(this TipsTextViewComponent self)
         {
             await ETTask.CompletedTask;
             return true;
         }
- 
+
         [EntitySystem]
         private static async ETTask<bool> YIUIOpen(this TipsTextViewComponent self, ParamVo vo)
         {
@@ -42,11 +42,12 @@ namespace ET.Client
 
         private static async ETTask PlayAnimation(this TipsTextViewComponent self)
         {
+            EntityRef<TipsTextViewComponent> selfRef = self;
             self.u_ComAnimation.Play(self.u_ComAnimation.clip.name);
             await self.Root().GetComponent<TimerComponent>().WaitAsync((long)(self.u_ComAnimation.clip.length * 1000));
+            self = selfRef;
             await self.UIView.CloseAsync();
         }
-
 
         #region YIUIEvent开始
 

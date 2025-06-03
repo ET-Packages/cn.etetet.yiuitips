@@ -79,6 +79,9 @@ namespace ET.Client
         [EnableAccessEntiyChild]
         private static async ETTask<bool> OpenTips(this TipsPanelComponent self, Type uiType, Entity parent, ParamVo vo, long waitId = 0)
         {
+            EntityRef<TipsPanelComponent> selfRef = self;
+            EntityRef<Entity> parentRef = parent;
+
             if (!CheckParent())
             {
                 return self._RefCount > 0;
@@ -93,6 +96,7 @@ namespace ET.Client
             var pool = self._AllPool[uiType];
             self._RefCount += 1; //加载前引用计数+1 防止加载过程中有人关闭 出现问题
             Entity view = await pool.Get();
+            self = selfRef;
             if (view == null)
             {
                 self._RefCount -= 1;
@@ -140,8 +144,8 @@ namespace ET.Client
                 }
             }
 
-            var viewComponent = uiComponent.GetComponent<YIUIViewComponent>();
-            if (viewComponent == null)
+            EntityRef<YIUIViewComponent> viewComponentRef = uiComponent.GetComponent<YIUIViewComponent>();
+            if (viewComponentRef.Entity == null)
             {
                 Debug.LogError($"{uiType.Name} 实例化的对象非 YIUIViewComponent");
                 view.Parent?.Dispose();
@@ -152,7 +156,8 @@ namespace ET.Client
             if (!CheckParent())
             {
                 Log.Error($"加载完毕后 父级已被销毁 {uiType.Name}");
-                await viewComponent.CloseAsync(false);
+                await viewComponentRef.Entity.CloseAsync(false);
+                self = selfRef;
                 return self._RefCount > 0;
             }
 
@@ -165,16 +170,18 @@ namespace ET.Client
 
             uiComponent.OwnerRectTransform.SetAsLastSibling();
 
+            parent = parentRef;
             uiComponent.SetParent(parent ?? YIUIMgrComponent.Inst.Root);
 
             self._AllRefView.Add(view);
 
-            var result = await viewComponent.Open(vo);
+            var result = await viewComponentRef.Entity.Open(vo);
             if (!result)
             {
-                await viewComponent.CloseAsync(false);
+                await viewComponentRef.Entity.CloseAsync(false);
             }
 
+            self = selfRef;
             return self._RefCount > 0;
 
             async ETTask<EntityRef<Entity>> Create()
@@ -184,6 +191,7 @@ namespace ET.Client
 
             bool CheckParent()
             {
+                parent = parentRef;
                 if (parent != null)
                 {
                     if (parent is { IsDisposed: true } || parent.IScene == null)
@@ -207,24 +215,29 @@ namespace ET.Client
                     Debug.LogError($"null对象 请检查");
                 }
 
+                EntityRef<TipsPanelComponent> selfRef = self;
                 self._AllRefView.RemoveWhere((v) =>
                 {
                     if ((Entity)v == null)
                     {
-                        self._RefCount -= 1;
+                        if (selfRef.Entity != null)
+                        {
+                            selfRef.Entity._RefCount -= 1;
+                        }
+
                         return true;
                     }
 
                     return false;
                 });
-                self.CheckRefCount();
+                selfRef.Entity.CheckRefCount();
                 return;
             }
 
             if (!self._AllRefView.Remove(view))
             {
                 //如果你确定这个东西是用tips打开的 这里又报错 大概率就是你在open过程中 回收了这个对象 导致的 说明你写法有问题
-                //然后因为打开失败又会调用一次 所以重复回收也会提示 如果你open返回fase 可以不用手动回收 fase会自动回收
+                //然后因为打开失败又会调用一次 所以重复回收也会提示 如果你open返回false 可以不用手动回收 false会自动回收
                 Debug.LogError($"{view.GetType().Name} 无法回收一个不存在的对象 必须是之前打开过的对象 否则引用计数会混乱 请检查");
                 return;
             }
