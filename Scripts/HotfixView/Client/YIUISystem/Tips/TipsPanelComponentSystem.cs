@@ -89,7 +89,7 @@ namespace ET.Client
 
             if (!self._AllPool.ContainsKey(uiType))
             {
-                self._AllPool.Add(uiType, new ObjAsyncCache<EntityRef<Entity>>(Create));
+                self._AllPool.Add(uiType, new(self, Create));
             }
 
             self.CheckAllPoolTips();
@@ -171,7 +171,7 @@ namespace ET.Client
             uiComponent.OwnerRectTransform.SetAsLastSibling();
 
             parent = parentRef;
-            uiComponent.SetParent(parent ?? YIUIMgrComponent.Inst.Root);
+            uiComponent.SetParent(parent ?? self.YIUIMgrRoot());
 
             self._AllRefView.Add(view);
 
@@ -186,7 +186,7 @@ namespace ET.Client
 
             async ETTask<EntityRef<Entity>> Create()
             {
-                return await YIUIFactory.InstantiateAsync(uiType, YIUIMgrComponent.Inst.Root, self.UIBase.OwnerRectTransform);
+                return await YIUIFactory.InstantiateAsync(self.Scene(), uiType, self.YIUIMgrRoot(), self.UIBase.OwnerRectTransform);
             }
 
             bool CheckParent()
@@ -265,7 +265,7 @@ namespace ET.Client
                         uiComponent.OwnerRectTransform.SetParent(tipsRoot, false);
                     }
 
-                    uiComponent.SetParent(YIUIMgrComponent.Inst.Root);
+                    uiComponent.SetParent(self.YIUIMgrRoot());
                 }
             }
 

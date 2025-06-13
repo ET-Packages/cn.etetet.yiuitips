@@ -9,39 +9,36 @@ namespace ET.Client
     /// </summary>
     public static partial class TipsHelper
     {
-        public static async ETTask<HashWaitError> OpenWait(string resName, params object[] paramMore)
+        public static async ETTask<HashWaitError> OpenWait(Scene scene, string resName, params object[] paramMore)
         {
             var vo = ParamVo.Get(paramMore);
-            var error = await OpenWaitToParent(resName, vo);
+            var error = await OpenWaitToParent(scene, resName, vo);
             ParamVo.Put(vo);
             return error;
         }
 
-        public static async ETTask<HashWaitError> OpenWaitToParent(string resName, Entity parent, params object[] paramMore)
+        public static async ETTask<HashWaitError> OpenWaitToParent(Scene scene, string resName, Entity parent, params object[] paramMore)
         {
             var vo = ParamVo.Get(paramMore);
-            var error = await OpenWaitToParent(resName, vo, parent);
+            var error = await OpenWaitToParent(scene, resName, vo, parent);
             ParamVo.Put(vo);
             return error;
         }
 
-        public static async ETTask<HashWaitError> OpenWaitToParent(string resName, ParamVo vo, Entity parent = null)
+        public static async ETTask<HashWaitError> OpenWaitToParent(Scene scene, string resName, ParamVo vo, Entity parent = null)
         {
             var data = YIUIBindHelper.GetBindVoByResName(resName);
             if (data == null) return HashWaitError.Error;
             var bindVo = data.Value;
-
             EntityRef<Entity> parentRef = parent;
-            EntityRef<CoroutineLock> coroutineLock = await YIUIMgrComponent.Inst.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
-
+            EntityRef<Scene> sceneRef = scene;
+            EntityRef<CoroutineLock> coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             var guid = IdGenerater.Instance.GenerateId();
-
-            var hashWait = YIUIMgrComponent.Inst.Root.GetComponent<HashWait>().Wait(guid);
-
-            await YIUIMgrComponent.Inst.Root.OpenPanelAsync<TipsPanelComponent, Type, Entity, long, ParamVo>(bindVo.ComponentType, parentRef.Entity, guid, vo);
-
+            scene = sceneRef;
+            var yiuiMgrRoot = scene.YIUIMgrRoot();
+            var hashWait = yiuiMgrRoot.GetComponent<HashWait>().Wait(guid);
+            await yiuiMgrRoot.OpenPanelAsync<TipsPanelComponent, Type, Entity, long, ParamVo>(bindVo.ComponentType, parentRef.Entity, guid, vo);
             coroutineLock.Entity.Dispose();
-
             return await hashWait;
         }
     }

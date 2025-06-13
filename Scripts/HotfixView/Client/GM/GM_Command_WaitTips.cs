@@ -14,15 +14,15 @@ namespace ET.Client
 
         public async ETTask<bool> Run(Scene clientScene, ParamVo paramVo)
         {
-            Test().NoContext();
+            Test(clientScene).NoContext();
             await ETTask.CompletedTask;
             return true;
         }
 
-        private async ETTask Test()
+        private async ETTask Test(Scene clientScene)
         {
             Log.Error($"打开 等待弹窗测试");
-            var result = await TipsHelper.OpenWait<TipsMessageViewComponent>("回调测试", new MessageTipsExtraData() { ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); }, CancelCallBack = () => { Debug.LogError($"回调测试, 取消按钮"); } });
+            var result = await TipsHelper.OpenWait<TipsMessageViewComponent>(clientScene, "回调测试", new MessageTipsExtraData() { ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); }, CancelCallBack = () => { Debug.LogError($"回调测试, 取消按钮"); } });
             Log.Error($"等待弹窗测试等待完毕 继续执行: {result}");
         }
     }
@@ -41,8 +41,8 @@ namespace ET.Client
         public async ETTask<bool> Run(Scene clientScene, ParamVo paramVo)
         {
             var cancelTime = paramVo.Get<long>();
-            var cancel     = new ETCancellationToken();
-            Test().WithContext(cancel);
+            var cancel = new ETCancellationToken();
+            Test(clientScene).WithContext(cancel);
             WaitCancel().WithContext(cancel);
             await ETTask.CompletedTask;
             return true;
@@ -55,10 +55,10 @@ namespace ET.Client
             }
         }
 
-        private async ETTask Test()
+        private async ETTask Test(Scene clientScene)
         {
             Log.Error($"打开 等待弹窗测试 取消测试");
-            var result = await TipsHelper.OpenWait<TipsMessageViewComponent>("回调测试", new MessageTipsExtraData() { ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); }, CancelCallBack = () => { Debug.LogError($"回调测试, 取消按钮"); } });
+            var result = await TipsHelper.OpenWait<TipsMessageViewComponent>(clientScene, "回调测试", new MessageTipsExtraData() { ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); }, CancelCallBack = () => { Debug.LogError($"回调测试, 取消按钮"); } });
             Log.Error($"等待弹窗测试等待完毕 继续执行 取消测试: {result}");
         }
     }
@@ -77,19 +77,19 @@ namespace ET.Client
         public async ETTask<bool> Run(Scene clientScene, ParamVo paramVo)
         {
             var timeout = paramVo.Get<long>();
-            var cancel  = new ETCancellationToken();
-            Test(timeout).WithContext(cancel);
+            var cancel = new ETCancellationToken();
+            Test(clientScene, timeout).WithContext(cancel);
             await ETTask.CompletedTask;
             return true;
         }
 
-        private async ETTask Test(long timeout)
+        private async ETTask Test(Scene clientScene, long timeout)
         {
             Log.Error($"打开 等待弹窗测试 超时测试");
-            var result = await TipsHelper.OpenWait<TipsMessageViewComponent>("回调测试", 
+            var result = await TipsHelper.OpenWait<TipsMessageViewComponent>(clientScene, "回调测试",
                 new MessageTipsExtraData()
                 {
-                    ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); }, 
+                    ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); },
                     CancelCallBack = () => { Debug.LogError($"回调测试, 取消按钮"); }
                 }).TimeoutAsync(timeout);
             Log.Error($"等待弹窗测试等待完毕 继续执行 超时测试: {result}");
@@ -111,9 +111,9 @@ namespace ET.Client
         public async ETTask<bool> Run(Scene clientScene, ParamVo paramVo)
         {
             var cancelTime = paramVo.Get<long>();
-            var timeout    = paramVo.Get<long>(1);
-            var cancel     = new ETCancellationToken();
-            Test(timeout).WithContext(cancel);
+            var timeout = paramVo.Get<long>(1);
+            var cancel = new ETCancellationToken();
+            Test(clientScene, timeout).WithContext(cancel);
             WaitCancel().WithContext(cancel);
             await ETTask.CompletedTask;
             return true;
@@ -126,13 +126,13 @@ namespace ET.Client
             }
         }
 
-        private async ETTask Test(long timeout)
+        private async ETTask Test(Scene clientScene, long timeout)
         {
             Log.Error($"打开 等待弹窗测试 取消超时测试");
-            var result = await TipsHelper.OpenWait<TipsMessageViewComponent>("回调测试", 
+            var result = await TipsHelper.OpenWait<TipsMessageViewComponent>(clientScene, "回调测试",
                 new MessageTipsExtraData()
                 {
-                    ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); }, 
+                    ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); },
                     CancelCallBack = () => { Debug.LogError($"回调测试, 取消按钮"); }
                 }).TimeoutAsync(timeout);
             Log.Error($"等待弹窗测试等待完毕 继续执行 取消超时测试: {result}");

@@ -21,7 +21,7 @@ namespace ET.Client
         public async ETTask<bool> Run(Scene clientScene, ParamVo paramVo)
         {
             var paramString = paramVo.Get<string>();
-            TipsHelper.OpenSync<TipsMessageViewComponent>(paramString);
+            TipsHelper.OpenSync<TipsMessageViewComponent>(clientScene, paramString);
             await ETTask.CompletedTask;
             return true;
         }
@@ -37,10 +37,10 @@ namespace ET.Client
 
         public async ETTask<bool> Run(Scene clientScene, ParamVo paramVo)
         {
-            TipsHelper.Open<TipsMessageViewComponent>("回调测试", new MessageTipsExtraData()
+            TipsHelper.Open<TipsMessageViewComponent>(clientScene, "回调测试", new MessageTipsExtraData()
             {
                 ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); },
-                CancelCallBack  = () => { Debug.LogError($"回调测试, 取消按钮"); }
+                CancelCallBack = () => { Debug.LogError($"回调测试, 取消按钮"); }
             }).NoContext();
             await ETTask.CompletedTask;
             return true;
@@ -57,7 +57,7 @@ namespace ET.Client
 
         public async ETTask<bool> Run(Scene clientScene, ParamVo paramVo)
         {
-            TipsHelper.Open<TipsMessageViewComponent>("只有确定 回调测试", new MessageTipsExtraData()
+            TipsHelper.Open<TipsMessageViewComponent>(clientScene, "只有确定 回调测试", new MessageTipsExtraData()
             {
                 ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); }
             }).NoContext();
@@ -76,13 +76,13 @@ namespace ET.Client
 
         public async ETTask<bool> Run(Scene clientScene, ParamVo paramVo)
         {
-            TipsHelper.Open<TipsMessageViewComponent>("回调测试 修改按钮名称", new MessageTipsExtraData()
+            TipsHelper.Open<TipsMessageViewComponent>(clientScene, "回调测试 修改按钮名称", new MessageTipsExtraData()
             {
                 ConfirmCallBack = () => { Debug.LogError($"回调测试, 确定按钮"); },
-                CancelCallBack  = () => { Debug.LogError($"回调测试, 取消按钮"); },
-                CloseCallBack   = () => { Debug.LogError($"回调测试, 关闭按钮"); },
-                ConfirmName     = "Confirm",
-                CancelName      = "Cancel"
+                CancelCallBack = () => { Debug.LogError($"回调测试, 取消按钮"); },
+                CloseCallBack = () => { Debug.LogError($"回调测试, 关闭按钮"); },
+                ConfirmName = "Confirm",
+                CancelName = "Cancel"
             }).NoContext();
             await ETTask.CompletedTask;
             return true;
@@ -103,7 +103,7 @@ namespace ET.Client
         public async ETTask<bool> Run(Scene clientScene, ParamVo paramVo)
         {
             var paramString = paramVo.Get<string>();
-            TipsHelper.OpenSync<TipsTextViewComponent>(paramString);
+            TipsHelper.OpenSync<TipsTextViewComponent>(clientScene, paramString);
             await ETTask.CompletedTask;
             return true;
         }
