@@ -43,11 +43,11 @@ namespace ET.Client
         //使用paramvo参数打开
         public static async ETTask OpenToParent<T>(Scene scene, ParamVo vo, Entity parent = null) where T : Entity
         {
-            EntityRef<Entity> parentRef = parent;
+            var parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
             using var coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             scene = sceneRef;
-            await scene.YIUIMgrRoot().OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(typeof(T), parentRef.Entity, vo);
+            await scene.YIUIRoot().OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(typeof(T), parentRef.Entity, vo);
         }
 
         //使用paramvo参数 同步打开 内部还是异步 为了解决vo被回收问题
@@ -59,12 +59,12 @@ namespace ET.Client
         //在外部vo会被回收 所以不能使用同对象 所以这里会创建一个新的防止空对象
         private static async ETTask OpenToParent2NewVo<T>(Scene scene, ParamVo vo, Entity parent = null) where T : Entity
         {
-            EntityRef<Entity> parentRef = parent;
+            var parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
             using var coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             var newVo = ParamVo.Get(vo.Data);
             scene = sceneRef;
-            await scene.YIUIMgrRoot().OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(typeof(T), parentRef.Entity, newVo);
+            await scene.YIUIRoot().OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(typeof(T), parentRef.Entity, newVo);
             ParamVo.Put(newVo);
         }
     }

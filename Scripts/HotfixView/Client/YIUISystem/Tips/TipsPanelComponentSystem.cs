@@ -80,7 +80,7 @@ namespace ET.Client
         private static async ETTask<bool> OpenTips(this TipsPanelComponent self, Type uiType, Entity parent, ParamVo vo, long waitId = 0)
         {
             EntityRef<TipsPanelComponent> selfRef = self;
-            EntityRef<Entity> parentRef = parent;
+            EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
 
             if (!CheckParent())
             {
@@ -171,7 +171,7 @@ namespace ET.Client
             uiComponent.OwnerRectTransform.SetAsLastSibling();
 
             parent = parentRef;
-            uiComponent.SetParent(parent ?? self.YIUIMgrRoot());
+            uiComponent.SetParent(parent ?? self.YIUIRoot());
 
             self._AllRefView.Add(view);
 
@@ -186,7 +186,7 @@ namespace ET.Client
 
             async ETTask<EntityRef<Entity>> Create()
             {
-                return await YIUIFactory.InstantiateAsync(self.Scene(), uiType, self.YIUIMgrRoot(), self.UIBase.OwnerRectTransform);
+                return await YIUIFactory.InstantiateAsync(self.Scene(), uiType, self.YIUIRoot(), self.UIBase.OwnerRectTransform);
             }
 
             bool CheckParent()
@@ -265,7 +265,7 @@ namespace ET.Client
                         uiComponent.OwnerRectTransform.SetParent(tipsRoot, false);
                     }
 
-                    uiComponent.SetParent(self.YIUIMgrRoot());
+                    uiComponent.SetParent(self.YIUIRoot());
                 }
             }
 

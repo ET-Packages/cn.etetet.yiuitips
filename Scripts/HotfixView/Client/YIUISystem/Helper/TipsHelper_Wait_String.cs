@@ -30,12 +30,12 @@ namespace ET.Client
             var data = YIUIBindHelper.GetBindVoByResName(resName);
             if (data == null) return HashWaitError.Error;
             var bindVo = data.Value;
-            EntityRef<Entity> parentRef = parent;
+            var parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
             EntityRef<CoroutineLock> coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             var guid = IdGenerater.Instance.GenerateId();
             scene = sceneRef;
-            var yiuiMgrRoot = scene.YIUIMgrRoot();
+            var yiuiMgrRoot = scene.YIUIRoot();
             var hashWait = yiuiMgrRoot.GetComponent<HashWait>().Wait(guid);
             await yiuiMgrRoot.OpenPanelAsync<TipsPanelComponent, Type, Entity, long, ParamVo>(bindVo.ComponentType, parentRef.Entity, guid, vo);
             coroutineLock.Entity.Dispose();

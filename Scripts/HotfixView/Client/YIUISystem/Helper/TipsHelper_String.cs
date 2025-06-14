@@ -43,11 +43,11 @@ namespace ET.Client
             var data = YIUIBindHelper.GetBindVoByResName(resName);
             if (data == null) return;
             var bindVo = data.Value;
-            EntityRef<Entity> parentRef = parent;
+            var parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
             using var coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             scene = sceneRef;
-            await scene.YIUIMgrRoot().OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(bindVo.ComponentType, parentRef.Entity, vo);
+            await scene.YIUIRoot().OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(bindVo.ComponentType, parentRef.Entity, vo);
         }
 
         //使用paramvo参数 同步打开 内部还是异步 为了解决vo被回收问题
@@ -62,12 +62,12 @@ namespace ET.Client
             var data = YIUIBindHelper.GetBindVoByResName(resName);
             if (data == null) return;
             var bindVo = data.Value;
-            EntityRef<Entity> parentRef = parent;
+            var parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
             using var coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             var newVo = ParamVo.Get(vo.Data);
             scene = sceneRef;
-            await scene.YIUIMgrRoot().OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(bindVo.ComponentType, parentRef.Entity, newVo);
+            await scene.YIUIRoot().OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(bindVo.ComponentType, parentRef.Entity, newVo);
             ParamVo.Put(newVo);
         }
     }
