@@ -26,7 +26,7 @@ namespace ET.Client
 
         public static async ETTask<HashWaitError> OpenWaitToParent<T>(Scene scene, ParamVo vo, Entity parent = null) where T : Entity, IYIUIBind, IYIUIOpen<ParamVo>
         {
-            var parentRef = EntityRefHelper.GetEntityRefSafety(parent);
+            EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
             EntityRef<CoroutineLock> coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             var guid = IdGenerater.Instance.GenerateId();

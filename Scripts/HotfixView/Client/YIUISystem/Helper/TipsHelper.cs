@@ -43,7 +43,7 @@ namespace ET.Client
         //使用paramvo参数打开
         public static async ETTask OpenToParent<T>(Scene scene, ParamVo vo, Entity parent = null) where T : Entity
         {
-            var parentRef = EntityRefHelper.GetEntityRefSafety(parent);
+            EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
             using var coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             scene = sceneRef;
@@ -59,7 +59,7 @@ namespace ET.Client
         //在外部vo会被回收 所以不能使用同对象 所以这里会创建一个新的防止空对象
         private static async ETTask OpenToParent2NewVo<T>(Scene scene, ParamVo vo, Entity parent = null) where T : Entity
         {
-            var parentRef = EntityRefHelper.GetEntityRefSafety(parent);
+            EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
             using var coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             var newVo = ParamVo.Get(vo.Data);

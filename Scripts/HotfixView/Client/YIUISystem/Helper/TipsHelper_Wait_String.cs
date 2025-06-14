@@ -30,7 +30,7 @@ namespace ET.Client
             var data = YIUIBindHelper.GetBindVoByResName(resName);
             if (data == null) return HashWaitError.Error;
             var bindVo = data.Value;
-            var parentRef = EntityRefHelper.GetEntityRefSafety(parent);
+            EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
             EntityRef<CoroutineLock> coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             var guid = IdGenerater.Instance.GenerateId();

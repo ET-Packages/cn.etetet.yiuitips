@@ -43,7 +43,7 @@ namespace ET.Client
             var data = YIUIBindHelper.GetBindVoByResName(resName);
             if (data == null) return;
             var bindVo = data.Value;
-            var parentRef = EntityRefHelper.GetEntityRefSafety(parent);
+            EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
             using var coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             scene = sceneRef;
@@ -62,7 +62,7 @@ namespace ET.Client
             var data = YIUIBindHelper.GetBindVoByResName(resName);
             if (data == null) return;
             var bindVo = data.Value;
-            var parentRef = EntityRefHelper.GetEntityRefSafety(parent);
+            EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
             using var coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             var newVo = ParamVo.Get(vo.Data);
