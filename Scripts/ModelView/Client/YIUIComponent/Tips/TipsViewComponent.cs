@@ -11,7 +11,7 @@
     /// </summary>
     public struct EventPutTipsView
     {
-        public Entity View;
+        public EntityRef<Entity> View;
         public bool   Destroy;
     }
 }
