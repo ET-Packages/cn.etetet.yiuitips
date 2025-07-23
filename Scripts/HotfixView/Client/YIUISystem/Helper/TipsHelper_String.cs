@@ -40,7 +40,7 @@ namespace ET.Client
         //使用paramvo参数打开
         public static async ETTask OpenToParent(Scene scene, string resName, ParamVo vo, Entity parent = null)
         {
-            var data = YIUIBindHelper.GetBindVoByResName(resName);
+            var data = scene.YIUIBind().GetBindVoByResName(resName);
             if (data == null) return;
             var bindVo = data.Value;
             EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
@@ -59,7 +59,7 @@ namespace ET.Client
         //在外部vo会被回收 所以不能使用同对象 所以这里会创建一个新的防止空对象
         private static async ETTask OpenToParent2NewVo(Scene scene, string resName, ParamVo vo, Entity parent = null)
         {
-            var data = YIUIBindHelper.GetBindVoByResName(resName);
+            var data = scene.YIUIBind().GetBindVoByResName(resName);
             if (data == null) return;
             var bindVo = data.Value;
             EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);

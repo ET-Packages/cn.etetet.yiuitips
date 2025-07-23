@@ -27,7 +27,7 @@ namespace ET.Client
 
         public static async ETTask<HashWaitError> OpenWaitToParent(Scene scene, string resName, ParamVo vo, Entity parent = null)
         {
-            var data = YIUIBindHelper.GetBindVoByResName(resName);
+            var data = scene.YIUIBind().GetBindVoByResName(resName);
             if (data == null) return HashWaitError.Error;
             var bindVo = data.Value;
             EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
