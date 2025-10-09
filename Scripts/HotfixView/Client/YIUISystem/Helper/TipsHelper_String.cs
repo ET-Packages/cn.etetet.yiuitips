@@ -45,7 +45,7 @@ namespace ET.Client
             var bindVo = data.Value;
             EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
-            using var coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
+            using var _ = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             scene = sceneRef;
             await scene.YIUIRoot().OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(bindVo.ComponentType, parentRef.Entity, vo);
         }
@@ -64,7 +64,7 @@ namespace ET.Client
             var bindVo = data.Value;
             EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
-            using var coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
+            using var _ = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             var newVo = ParamVo.Get(vo.Data);
             scene = sceneRef;
             await scene.YIUIRoot().OpenPanelAsync<TipsPanelComponent, Type, Entity, ParamVo>(bindVo.ComponentType, parentRef.Entity, newVo);
