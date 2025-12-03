@@ -9,7 +9,7 @@ namespace ET.Client
     /// </summary>
     public static partial class TipsHelper
     {
-        public static async ETTask<HashWaitError> OpenWait(Scene scene, string resName, params object[] paramMore)
+        public static async ETTask<EHashWaitError> OpenWait(Scene scene, string resName, params object[] paramMore)
         {
             var vo = ParamVo.Get(paramMore);
             var error = await OpenWaitToParent(scene, resName, vo);
@@ -17,7 +17,7 @@ namespace ET.Client
             return error;
         }
 
-        public static async ETTask<HashWaitError> OpenWaitToParent(Scene scene, string resName, Entity parent, params object[] paramMore)
+        public static async ETTask<EHashWaitError> OpenWaitToParent(Scene scene, string resName, Entity parent, params object[] paramMore)
         {
             var vo = ParamVo.Get(paramMore);
             var error = await OpenWaitToParent(scene, resName, vo, parent);
@@ -25,20 +25,19 @@ namespace ET.Client
             return error;
         }
 
-        public static async ETTask<HashWaitError> OpenWaitToParent(Scene scene, string resName, ParamVo vo, Entity parent = null)
+        public static async ETTask<EHashWaitError> OpenWaitToParent(Scene scene, string resName, ParamVo vo, Entity parent = null)
         {
             var data = scene.YIUIBind().GetBindVoByResName(resName);
-            if (data == null) return HashWaitError.Error;
+            if (data == null) return EHashWaitError.Error;
             var bindVo = data.Value;
             EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
-            EntityRef<CoroutineLock> coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
+            using EntityRef<CoroutineLock> coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             var guid = IdGenerater.Instance.GenerateId();
             scene = sceneRef;
             var yiuiMgrRoot = scene.YIUIRoot();
             var hashWait = yiuiMgrRoot.GetComponent<HashWait>().Wait(guid);
             await yiuiMgrRoot.OpenPanelAsync<TipsPanelComponent, Type, Entity, long, ParamVo>(bindVo.ComponentType, parentRef.Entity, guid, vo);
-            coroutineLock.Entity.Dispose();
             return await hashWait;
         }
     }

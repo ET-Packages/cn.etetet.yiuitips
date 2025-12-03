@@ -1,6 +1,5 @@
 ﻿using System;
 using YIUIFramework;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace ET.Client
@@ -50,10 +49,18 @@ namespace ET.Client
 
             self.ExtraData = vo.Get(1, new MessageTipsExtraData());
             self.u_DataMessageContent.SetValue(content);
-            self.u_DataShowCancel.SetValue(self.ExtraData.CancelCallBack != null);
-            self.u_DataShowClose.SetValue(self.ExtraData.CloseCallBack != null);
             self.u_DataConfirmName.SetValue(string.IsNullOrEmpty(self.ExtraData.ConfirmName) ? "确定" : self.ExtraData.ConfirmName);
             self.u_DataCancelName.SetValue(string.IsNullOrEmpty(self.ExtraData.CancelName) ? "取消" : self.ExtraData.CancelName);
+            self.u_DataShowClose.SetValue(self.ExtraData.ShowCloseButton);
+            if (!self.ExtraData.ShowCancelButton && !self.ExtraData.ShowCloseButton)
+            {
+                self.u_DataShowCancel.SetValue(true);
+            }
+            else
+            {
+                self.u_DataShowCancel.SetValue(self.ExtraData.ShowCancelButton);
+            }
+
             return true;
         }
 
@@ -62,21 +69,21 @@ namespace ET.Client
         [YIUIInvoke(TipsMessageViewComponent.OnEventConfirmInvoke)]
         private static void OnEventConfirmInvoke(this TipsMessageViewComponent self)
         {
-            self.ExtraData.ConfirmCallBack?.Invoke();
+            self.UIWindow.NotifyWait(EHashWaitError.Success);
             self.UIView.Close();
         }
 
         [YIUIInvoke(TipsMessageViewComponent.OnEventCancelInvoke)]
         private static void OnEventCancelInvoke(this TipsMessageViewComponent self)
         {
-            self.ExtraData.CancelCallBack?.Invoke();
+            self.UIWindow.NotifyWait(EHashWaitError.Cancel);
             self.UIView.Close();
         }
 
         [YIUIInvoke(TipsMessageViewComponent.OnEventCloseInvoke)]
         private static void OnEventCloseInvoke(this TipsMessageViewComponent self)
         {
-            self.ExtraData.CloseCallBack?.Invoke();
+            self.UIWindow.NotifyWait(EHashWaitError.Cancel);
             self.UIView.Close();
         }
 

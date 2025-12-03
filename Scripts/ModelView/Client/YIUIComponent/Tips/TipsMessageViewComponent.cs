@@ -12,10 +12,9 @@ namespace ET.Client
     [EnableClass]
     public class MessageTipsExtraData
     {
-        public string ConfirmName;     //确定按钮换名字
-        public Action ConfirmCallBack; //确定方法
-        public string CancelName;      //取消按钮换名字
-        public Action CancelCallBack;  //取消方法
-        public Action CloseCallBack;   //关闭方法
+        public string ConfirmName; //确定按钮换名字
+        public string CancelName; //取消按钮换名字
+        public bool ShowCancelButton; //显示取消按钮
+        public bool ShowCloseButton; //显示关闭按钮
     }
 }
