@@ -28,7 +28,7 @@ namespace ET.Client
         {
             EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
-            using EntityRef<CoroutineLock> coroutineLock = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
+            using var _ = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
             var guid = IdGenerater.Instance.GenerateId();
             scene = sceneRef;
             var yiuiMgrRoot = scene.YIUIRoot();
