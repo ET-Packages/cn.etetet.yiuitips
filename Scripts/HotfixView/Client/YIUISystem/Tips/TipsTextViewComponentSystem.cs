@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using YIUIFramework;
 using UnityEngine;
 
@@ -44,7 +44,11 @@ namespace ET.Client
         {
             EntityRef<TipsTextViewComponent> selfRef = self;
             self.u_ComAnimation.Play(self.u_ComAnimation.clip.name);
+            #if ET9
             await self.Root().GetComponent<TimerComponent>().WaitAsync((long)(self.u_ComAnimation.clip.length * 1000));
+            #else
+            await self.Root().TimerComponent.WaitAsync((long)(self.u_ComAnimation.clip.length * 1000));
+            #endif
             self = selfRef;
             await self.UIView.CloseAsync();
         }

@@ -41,7 +41,11 @@ namespace ET.Client
 
         private static async ETTask WaitFrameDynamicEvent(Fiber fiber, EventPutTipsView putTipsEvent)
         {
+            #if ET9
             await fiber.Root?.GetComponent<TimerComponent>()?.WaitFrameAsync();
+            #else
+            await fiber.Root?.TimerComponent?.WaitFrameAsync();
+            #endif
             await fiber.EntitySystem?.DynamicEvent(putTipsEvent);
         }
 

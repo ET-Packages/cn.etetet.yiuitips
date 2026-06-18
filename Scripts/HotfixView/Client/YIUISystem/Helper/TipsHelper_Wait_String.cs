@@ -32,7 +32,11 @@ namespace ET.Client
             var bindVo = data.Value;
             EntityRef<Entity> parentRef = EntityRefHelper.GetEntityRefSafety(parent);
             EntityRef<Scene> sceneRef = scene;
+            #if ET9
             using var _ = await scene.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
+            #else
+            using var _ = await scene.Root().CoroutineLockComponent.Wait(CoroutineLockType.YIUIFramework, typeof(TipsHelper).GetHashCode());
+            #endif
             var guid = IdGenerater.Instance.GenerateId();
             scene = sceneRef;
             var yiuiMgrRoot = scene.YIUIRoot();

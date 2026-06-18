@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using YIUIFramework;
 
@@ -50,7 +50,11 @@ namespace ET.Client
             async ETTask WaitCancel()
             {
                 //模拟等待X秒后取消
+                #if ET9
                 await clientScene.Root().GetComponent<TimerComponent>().WaitAsync(cancelTime);
+                #else
+                await clientScene.Root().TimerComponent.WaitAsync(cancelTime);
+                #endif
                 cancel.Cancel();
             }
         }
@@ -86,7 +90,11 @@ namespace ET.Client
         private async ETTask Test(Scene clientScene, long timeout)
         {
             Log.Error($"打开 等待弹窗测试 超时测试");
+            #if ET9
             var result = await TipsHelper.OpenWait<TipsMessageViewComponent>(clientScene, "回调测试").TimeoutAsync(timeout);
+            #else
+            var result = await TipsHelper.OpenWait<TipsMessageViewComponent>(clientScene, "回调测试").TimeoutAsync(clientScene.Root().TimerComponent, timeout);
+            #endif
             Log.Error($"等待弹窗测试等待完毕 继续执行 超时测试: {result}");
         }
     }
@@ -116,7 +124,11 @@ namespace ET.Client
             async ETTask WaitCancel()
             {
                 //模拟等待X秒后取消
+                #if ET9
                 await clientScene.Root().GetComponent<TimerComponent>().WaitAsync(cancelTime);
+                #else
+                await clientScene.Root().TimerComponent.WaitAsync(cancelTime);
+                #endif
                 cancel.Cancel();
             }
         }
@@ -124,7 +136,11 @@ namespace ET.Client
         private async ETTask Test(Scene clientScene, long timeout)
         {
             Log.Error($"打开 等待弹窗测试 取消超时测试");
+            #if ET9
             var result = await TipsHelper.OpenWait<TipsMessageViewComponent>(clientScene, "回调测试").TimeoutAsync(timeout);
+            #else
+            var result = await TipsHelper.OpenWait<TipsMessageViewComponent>(clientScene, "回调测试").TimeoutAsync(clientScene.Root().TimerComponent, timeout);
+            #endif
             Log.Error($"等待弹窗测试等待完毕 继续执行 取消超时测试: {result}");
         }
     }
